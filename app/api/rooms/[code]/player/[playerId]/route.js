@@ -32,6 +32,11 @@ export async function GET(request, { params }) {
     response.round = cr.roundNumber;
     response.isImpostor = isImpostor;
     response.word = isImpostor ? null : cr.word;
+  }
+
+  if (room.status === 'round1_voting' || room.status === 'round2_voting') {
+    const cr = room.currentRound;
+    response.round = cr.roundNumber;
     response.players = room.players
       .filter((p) => p.id !== playerId)
       .map((p) => ({ id: p.id, name: p.name }));

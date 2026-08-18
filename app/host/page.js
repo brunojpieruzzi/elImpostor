@@ -207,15 +207,31 @@ export default function HostPage() {
       {(room.status === 'round1_active' || room.status === 'round2_active') && (
         <>
           <div className="step">Ronda {room.round} en curso</div>
-          <h2>🎭 Discutan y voten</h2>
+          <h2>🎭 Discutan la palabra</h2>
           <p>
             Cada invitado ya tiene su celular con la palabra (o con el rol de
-            Impostor). Que tiren pistas en voz alta sin decir la palabra, y
-            que voten desde su celular a quién sospechan.
+            Impostor). Que tiren pistas en voz alta sin decir la palabra
+            posta.
           </p>
           <p className="small">
+            Cuando terminen de discutir, abrí la votación para que cada uno
+            vote desde su celular a quién sospecha.
+          </p>
+          {actionError && <p className="small error-text">{actionError}</p>}
+          <button className="btn-danger" onClick={() => callAction('round-open-vote')}>
+            Abrir votación de la Ronda {room.round} 🗳️
+          </button>
+        </>
+      )}
+
+      {(room.status === 'round1_voting' || room.status === 'round2_voting') && (
+        <>
+          <div className="step">Ronda {room.round} · Votación abierta</div>
+          <h2>🗳️ Están votando</h2>
+          <p>Cada invitado está votando desde su celular a quién sospecha.</p>
+          <p className="small">
             Ni vos sabés quién es el Impostor todavía — se revela cuando
-            cierres la ronda.
+            cierres la votación.
           </p>
           <p className="small">
             {room.votesIn} de {room.playerCount} votaron

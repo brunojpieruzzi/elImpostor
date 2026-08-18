@@ -28,6 +28,10 @@ export async function GET(request, { params }) {
 
   if (room.status === 'round1_active' || room.status === 'round2_active') {
     payload.round = room.currentRound.roundNumber;
+  }
+
+  if (room.status === 'round1_voting' || room.status === 'round2_voting') {
+    payload.round = room.currentRound.roundNumber;
     payload.votesIn = Object.keys(room.currentRound.votes || {}).length;
   }
 

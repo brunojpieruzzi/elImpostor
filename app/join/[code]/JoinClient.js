@@ -161,8 +161,9 @@ export default function JoinClient({ code }) {
             </div>
             <p className="small">
               Escuchá lo que dicen los demás y tirá algo creíble sin que se
-              note que no sabés de qué hablan. Después votá a quién sospechás.
+              note que no sabés de qué hablan.
             </p>
+            <p className="small">Esperá a que el anfitrión abra la votación.</p>
           </>
         ) : (
           <>
@@ -175,12 +176,15 @@ export default function JoinClient({ code }) {
               Digan palabras o frases relacionadas sin decir la palabra
               posta. Si alguien tira algo raro... ¡ese puede ser el Impostor!
             </p>
+            <p className="small">Esperá a que el anfitrión abra la votación.</p>
           </>
         ))}
 
-      {(state.status === 'round1_active' || state.status === 'round2_active') && (
-        <div className="vote-section">
-          <div className="step">🗳️ Votá a quién sospechás</div>
+      {(state.status === 'round1_voting' || state.status === 'round2_voting') && (
+        <>
+          <div className="step">Ronda {state.round} · Votación</div>
+          <h2>🗳️ ¿Quién es el Impostor?</h2>
+          <p className="small">Votá a quién sospechás.</p>
           <div className="vote-list">
             {state.players.map((p) => (
               <button
@@ -194,7 +198,7 @@ export default function JoinClient({ code }) {
               </button>
             ))}
           </div>
-        </div>
+        </>
       )}
 
       {(state.status === 'round1_result' || state.status === 'round2_result') && (
