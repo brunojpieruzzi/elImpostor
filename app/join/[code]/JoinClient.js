@@ -103,11 +103,11 @@ export default function JoinClient({ code }) {
     return (
       <div className="screen">
         <div className="eyebrow">Sala {code}</div>
-        <h1>🎭 Impostor: Edición Casamiento</h1>
+        <h1>🎭 Impostor</h1>
         <p>
           En cada ronda, todos menos el Impostor conocen una palabra secreta.
           Tiren pistas sin decirla directamente y descubran quién no la sabe
-          realmente. La última ronda no se juega... ¡se revela algo grande!
+          realmente. La última ronda no se juega... ¡hay un premio!
         </p>
         <form onSubmit={submitJoin}>
           <label htmlFor="playerName">Tu nombre</label>

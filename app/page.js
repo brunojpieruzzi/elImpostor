@@ -19,12 +19,12 @@ export default function HomePage() {
 
   return (
     <div className="screen">
-      <div className="eyebrow">Impostor: Edición Casamiento</div>
+      <div className="eyebrow">Ronda de impostores</div>
       <h1>🎭 ¿Quién es el Impostor?</h1>
       <p>
         En cada ronda todos reciben la misma palabra secreta... menos el
         Impostor. Tiren pistas sin decirla directamente y voten a quién
-        sospechan. La última ronda no se juega — ¡se revela algo grande!
+        sospechan. La última ronda no se juega — ¡hay un premio!
       </p>
       <p className="small">
         Cada invitado juega desde su propio celular. El anfitrión arma la sala

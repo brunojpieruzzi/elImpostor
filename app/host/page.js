@@ -142,7 +142,7 @@ export default function HostPage() {
     return (
       <div className="screen">
         <div className="eyebrow">Panel del anfitrión</div>
-        <h1>🎭 Impostor: Edición Casamiento</h1>
+        <h1>🎭 Impostor</h1>
         <p>
           Creá una sala y compartí el QR con tus invitados. Cada uno entra
           desde su propio celular.

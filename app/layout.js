@@ -1,8 +1,8 @@
 import './globals.css';
 
 export const metadata = {
-  title: '🎭 Impostor: Edición Casamiento',
-  description: 'Un juego para descubrir el gran secreto',
+  title: '🎭 Impostor',
+  description: 'Un juego de pistas, votos y un gran premio final',
 };
 
 export const viewport = {
@@ -16,7 +16,7 @@ export default function RootLayout({ children }) {
       <body>
         <div id="confetti-layer" />
         <div className="app">{children}</div>
-        <footer className="site-footer">🎭 Impostor: Edición Casamiento</footer>
+        <footer className="site-footer">🎭 Impostor</footer>
       </body>
     </html>
   );
