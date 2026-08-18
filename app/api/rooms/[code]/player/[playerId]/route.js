@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server';
-import { getRoom } from '@/lib/room';
+import { getRoom, tallyVotes } from '@/lib/room';
 import { SECRET_DATE_TEXT, REVEAL_NAMES } from '@/lib/secret';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
 
-// Cada invitado sondea su propio estado acá. El dato secreto solo se incluye
-// para el Oráculo (desde que se asignan los roles) o para todos una vez que
-// el anfitrión dispara el reveal final.
+// Cada invitado sondea su propio estado acá. Durante una ronda activa, solo
+// el propio jugador sabe si es el impostor (y por lo tanto si ve la palabra
+// o no). El dato del casamiento solo se manda una vez que status es
+// 'final_revealed'.
 export async function GET(request, { params }) {
   const { code, playerId } = await params;
   const room = await getRoom(code);
@@ -22,21 +23,36 @@ export async function GET(request, { params }) {
   const response = {
     status: room.status,
     name: player.name,
-    role: player.role,
     playerCount: room.players.length,
   };
 
-  const oracleSeesSecret = player.role === 'oracle' && room.status !== 'lobby';
-  if (oracleSeesSecret || room.status === 'final_revealed') {
-    response.secret = { dateText: SECRET_DATE_TEXT, names: REVEAL_NAMES };
+  if (room.status === 'round1_active' || room.status === 'round2_active') {
+    const cr = room.currentRound;
+    const isImpostor = cr.impostorId === playerId;
+    response.round = cr.roundNumber;
+    response.isImpostor = isImpostor;
+    response.word = isImpostor ? null : cr.word;
+    response.players = room.players
+      .filter((p) => p.id !== playerId)
+      .map((p) => ({ id: p.id, name: p.name }));
+    response.myVote = cr.votes[playerId] || null;
   }
 
-  if (room.status === 'roles_revealed' || room.status === 'final_revealed') {
-    const oracle = room.players.find((p) => p.role === 'oracle');
-    response.oracleName = oracle ? oracle.name : null;
-    response.players = [...room.players]
-      .sort((a, b) => a.joinedAt - b.joinedAt)
-      .map((p) => ({ name: p.name, role: p.role }));
+  if (room.status === 'round1_result' || room.status === 'round2_result') {
+    const cr = room.currentRound;
+    const impostor = room.players.find((p) => p.id === cr.impostorId);
+    const { rows, accused, totalVotes } = tallyVotes(room);
+    response.round = cr.roundNumber;
+    response.word = cr.word;
+    response.impostorName = impostor ? impostor.name : '-';
+    response.votesTally = rows;
+    response.accusedNames = accused.map((a) => a.name);
+    response.wasCorrect = accused.some((a) => a.id === cr.impostorId);
+    response.totalVotes = totalVotes;
+  }
+
+  if (room.status === 'final_revealed') {
+    response.secret = { dateText: SECRET_DATE_TEXT, names: REVEAL_NAMES };
   }
 
   return NextResponse.json(response);

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getRoom, setRoomFields } from '@/lib/room';
+import { getRoom, revealRound } from '@/lib/room';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
@@ -15,10 +15,10 @@ export async function POST(request, { params }) {
   if (!hostToken || hostToken !== room.hostToken) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 });
   }
-  if (room.status !== 'assigned') {
+  if (room.status !== 'round1_active' && room.status !== 'round2_active') {
     return NextResponse.json({ error: 'invalid_state' }, { status: 409 });
   }
 
-  await setRoomFields(code, { status: 'roles_revealed' });
+  await revealRound(code);
   return NextResponse.json({ ok: true });
 }

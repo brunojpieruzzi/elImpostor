@@ -19,11 +19,12 @@ export default function HomePage() {
 
   return (
     <div className="screen">
-      <div className="eyebrow">Ronda de curiosidades</div>
-      <h1>🔮 El Oráculo 🔮</h1>
+      <div className="eyebrow">Impostor: Edición Casamiento</div>
+      <h1>🎭 ¿Quién es el Impostor?</h1>
       <p>
-        Una sola persona va a conocer el dato secreto. El resto tiene que
-        descubrirlo a los gritos, tirando ideas y palabras sueltas hasta acertar.
+        En cada ronda todos reciben la misma palabra secreta... menos el
+        Impostor. Tiren pistas sin decirla directamente y voten a quién
+        sospechan. La última ronda no se juega — ¡se revela algo grande!
       </p>
       <p className="small">
         Cada invitado juega desde su propio celular. El anfitrión arma la sala

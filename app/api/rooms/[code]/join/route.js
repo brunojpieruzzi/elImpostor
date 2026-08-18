@@ -24,7 +24,7 @@ export async function POST(request, { params }) {
   const name = (rawName || 'Invitado').slice(0, 40);
 
   const id = crypto.randomUUID();
-  const updated = await addPlayer(code, { id, name, role: null, joinedAt: Date.now() });
+  const updated = await addPlayer(code, { id, name, joinedAt: Date.now() });
   if (!updated) {
     return NextResponse.json({ error: 'round_started' }, { status: 409 });
   }

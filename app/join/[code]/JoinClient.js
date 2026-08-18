@@ -4,13 +4,6 @@ import FinalReveal from '@/components/FinalReveal';
 
 const POLL_MS = 1500;
 
-const IDEAS = [
-  'Digan si el número es par o impar, sin decir cuál es.',
-  'Comparen el mes con una estación del año.',
-  'Den una pista sobre algo que pasó ese año, sin decir el año.',
-  'Reaccionen con "más frío" o "más caliente" a las ideas que van tirando los demás.',
-];
-
 export default function JoinClient({ code }) {
   const storageKey = `oraculo_player_${code}`;
   const [playerId, setPlayerId] = useState(null);
@@ -18,8 +11,8 @@ export default function JoinClient({ code }) {
   const [joining, setJoining] = useState(false);
   const [joinError, setJoinError] = useState('');
   const [state, setState] = useState(null);
-  const [ideasOpen, setIdeasOpen] = useState(false);
   const [checkedStorage, setCheckedStorage] = useState(false);
+  const [voting, setVoting] = useState(false);
   const pollRef = useRef(null);
 
   useEffect(() => {
@@ -87,6 +80,21 @@ export default function JoinClient({ code }) {
     }
   }
 
+  async function castVote(votedForId) {
+    setVoting(true);
+    try {
+      await fetch(`/api/rooms/${code}/vote`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ playerId, votedForId }),
+      });
+      fetchState();
+    } catch {
+    } finally {
+      setVoting(false);
+    }
+  }
+
   if (!checkedStorage) {
     return <div className="screen" />;
   }
@@ -95,10 +103,11 @@ export default function JoinClient({ code }) {
     return (
       <div className="screen">
         <div className="eyebrow">Sala {code}</div>
-        <h1>🔮 El Oráculo 🔮</h1>
+        <h1>🎭 Impostor: Edición Casamiento</h1>
         <p>
-          Una sola persona va a conocer el dato secreto. El resto tiene que
-          descubrirlo a los gritos, tirando ideas y palabras sueltas hasta acertar.
+          En cada ronda, todos menos el Impostor conocen una palabra secreta.
+          Tiren pistas sin decirla directamente y descubran quién no la sabe
+          realmente. La última ronda no se juega... ¡se revela algo grande!
         </p>
         <form onSubmit={submitJoin}>
           <label htmlFor="playerName">Tu nombre</label>
@@ -136,69 +145,77 @@ export default function JoinClient({ code }) {
           <div className="step">Adentro</div>
           <h2>¡Ya estás anotado, {state.name}! 🎉</h2>
           <p className="small">
-            Esperá a que el anfitrión arranque la ronda. No sueltes el celular.
+            Esperá a que el anfitrión arranque la ronda 1. No sueltes el celular.
           </p>
           <p className="small">Van {state.playerCount} anotados.</p>
         </>
       )}
 
-      {state.status === 'assigned' &&
-        (state.role === 'oracle' ? (
+      {(state.status === 'round1_active' || state.status === 'round2_active') &&
+        (state.isImpostor ? (
           <>
-            <div className="step">Solo para tus ojos</div>
-            <h2>🔮 Sos el Oráculo</h2>
+            <div className="step">Ronda {state.round} · Solo para vos</div>
+            <h2>🎭 Sos el Impostor</h2>
             <div className="card">
-              <div className="role-oracle">
-                El dato secreto es:
-                <br />
-                {state.secret?.dateText}
-              </div>
+              <div className="role-impostor">No sabés la palabra secreta.</div>
             </div>
             <p className="small">
-              Dales pistas indirectas para que el resto lo adivine, sin decirlo
-              directamente.
+              Escuchá lo que dicen los demás y tirá algo creíble sin que se
+              note que no sabés de qué hablan. Después votá a quién sospechás.
             </p>
-            <button className="btn-ghost" onClick={() => setIdeasOpen((v) => !v)}>
-              💡 Banco de ideas
-            </button>
-            {ideasOpen && (
-              <ul className="ideas">
-                {IDEAS.map((idea) => (
-                  <li key={idea}>{idea}</li>
-                ))}
-              </ul>
-            )}
           </>
         ) : (
           <>
-            <div className="step">Solo para tus ojos</div>
-            <h2>🙃 Sos de los que adivinan</h2>
+            <div className="step">Ronda {state.round} · Solo para vos</div>
+            <h2>🤫 La palabra es...</h2>
             <div className="card">
-              <div className="role-guesser">No sabés nada... todavía.</div>
+              <div className="role-word">{state.word}</div>
             </div>
             <p className="small">
-              Prestá atención a las pistas del Oráculo y gritá ideas, palabras y
-              números hasta acertar.
+              Digan palabras o frases relacionadas sin decir la palabra
+              posta. Si alguien tira algo raro... ¡ese puede ser el Impostor!
             </p>
           </>
         ))}
 
-      {state.status === 'roles_revealed' && (
+      {(state.status === 'round1_active' || state.status === 'round2_active') && (
+        <div className="vote-list">
+          {state.players.map((p) => (
+            <button
+              key={p.id}
+              className={'vote-btn' + (state.myVote === p.id ? ' selected' : '')}
+              onClick={() => castVote(p.id)}
+              disabled={voting}
+            >
+              <span>{p.name}</span>
+              {state.myVote === p.id && <span className="vote-check">✓ tu voto</span>}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {(state.status === 'round1_result' || state.status === 'round2_result') && (
         <>
-          <div className="step">Resultado</div>
-          <h2>El Oráculo era...</h2>
-          <div className="oracle-name">{state.oracleName || '-'}</div>
+          <div className="step">Ronda {state.round} · Resultado</div>
+          <h2>La palabra era: {state.word}</h2>
+          <div className="impostor-name">🎭 {state.impostorName}</div>
           <div>
-            {(state.players || []).map((p, i) => (
-              <div className="result-row" key={i}>
-                <span>{p.name}</span>
-                <span className={p.role === 'oracle' ? 'tag-oracle' : 'tag-guesser'}>
-                  {p.role === 'oracle' ? '🔮 Oráculo' : '🙃 Adivinaba'}
+            {state.votesTally.map((row) => (
+              <div
+                className={'result-row' + (state.accusedNames.includes(row.name) ? ' accused' : '')}
+                key={row.id}
+              >
+                <span>{row.name}</span>
+                <span className={row.name === state.impostorName ? 'tag-impostor' : 'tag-crew'}>
+                  {row.count} voto{row.count === 1 ? '' : 's'}
                 </span>
               </div>
             ))}
           </div>
-          <p className="small">Esperá el gran momento...</p>
+          <span className={'correct-badge ' + (state.wasCorrect ? 'yes' : 'no')}>
+            {state.wasCorrect ? '✅ ¡Lo descubrieron!' : '❌ Se les escapó...'}
+          </span>
+          <p className="small">Esperá la próxima ronda...</p>
         </>
       )}
 

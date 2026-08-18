@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getRoom, setRoomFields, setPlayers } from '@/lib/room';
+import { getRoom, startRound } from '@/lib/room';
+import { ROUND_WORDS } from '@/lib/secret';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
@@ -22,16 +23,6 @@ export async function POST(request, { params }) {
     return NextResponse.json({ error: 'not_enough_players' }, { status: 400 });
   }
 
-  const oracleIndex = Math.floor(Math.random() * room.players.length);
-  const oracleId = room.players[oracleIndex].id;
-
-  const players = room.players.map((p) => ({
-    ...p,
-    role: p.id === oracleId ? 'oracle' : 'guesser',
-  }));
-
-  await setPlayers(code, players);
-  await setRoomFields(code, { status: 'assigned', oracleId });
-
+  await startRound(code, 1, ROUND_WORDS[0]);
   return NextResponse.json({ ok: true });
 }

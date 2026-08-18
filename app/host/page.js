@@ -86,7 +86,7 @@ export default function HostPage() {
     QRCode.toDataURL(url, {
       margin: 1,
       width: 320,
-      color: { dark: '#2a2247', light: '#ffffff' },
+      color: { dark: '#45611a', light: '#ffffff' },
     })
       .then(setQrUrl)
       .catch(() => setQrUrl(''));
@@ -142,7 +142,7 @@ export default function HostPage() {
     return (
       <div className="screen">
         <div className="eyebrow">Panel del anfitrión</div>
-        <h1>🔮 El Oráculo 🔮</h1>
+        <h1>🎭 Impostor: Edición Casamiento</h1>
         <p>
           Creá una sala y compartí el QR con tus invitados. Cada uno entra
           desde su propio celular.
@@ -199,51 +199,65 @@ export default function HostPage() {
             onClick={() => callAction('start')}
             disabled={room.playerCount < 2}
           >
-            Elegir al Oráculo en secreto 🤫
+            Arrancar Ronda 1: Impostor 🎭
           </button>
         </>
       )}
 
-      {room.status === 'assigned' && (
+      {(room.status === 'round1_active' || room.status === 'round2_active') && (
         <>
-          <div className="step">Paso 2 · Ronda de adivinanzas</div>
-          <h2>🔮 ¡Ya está elegido!</h2>
+          <div className="step">Ronda {room.round} en curso</div>
+          <h2>🎭 Discutan y voten</h2>
           <p>
-            Decile a todos que miren su celular: ahí van a ver si son el
-            Oráculo o si tienen que adivinar.
+            Cada invitado ya tiene su celular con la palabra (o con el rol de
+            Impostor). Que tiren pistas en voz alta sin decir la palabra, y
+            que voten desde su celular a quién sospechan.
           </p>
           <p className="small">
-            El Oráculo da pistas indirectas sobre el dato secreto, sin
-            decirlo. El resto grita ideas hasta adivinar (¡o rendirse!).
+            Ni vos sabés quién es el Impostor todavía — se revela cuando
+            cierres la ronda.
+          </p>
+          <p className="small">
+            {room.votesIn} de {room.playerCount} votaron
           </p>
           {actionError && <p className="small error-text">{actionError}</p>}
-          <button className="btn-danger" onClick={() => callAction('reveal-roles')}>
-            ¿Ya adivinaron o se rindieron? Revelar Oráculo ➡️
+          <button className="btn-danger" onClick={() => callAction('round-reveal')}>
+            Revelar Impostor de la Ronda {room.round} ➡️
           </button>
         </>
       )}
 
-      {room.status === 'roles_revealed' && (
+      {(room.status === 'round1_result' || room.status === 'round2_result') && (
         <>
-          <div className="step">Resultado</div>
-          <h2>El Oráculo era...</h2>
-          <div className="oracle-name">
-            {room.players.find((p) => p.role === 'oracle')?.name || '-'}
-          </div>
+          <div className="step">Ronda {room.round} · Resultado</div>
+          <h2>La palabra era: {room.word}</h2>
+          <div className="impostor-name">🎭 {room.impostorName}</div>
           <div>
-            {room.players.map((p) => (
-              <div className="result-row" key={p.id}>
-                <span>{p.name}</span>
-                <span className={p.role === 'oracle' ? 'tag-oracle' : 'tag-guesser'}>
-                  {p.role === 'oracle' ? '🔮 Oráculo' : '🙃 Adivinaba'}
+            {room.votesTally.map((row) => (
+              <div
+                className={'result-row' + (room.accusedNames.includes(row.name) ? ' accused' : '')}
+                key={row.id}
+              >
+                <span>{row.name}</span>
+                <span className={row.name === room.impostorName ? 'tag-impostor' : 'tag-crew'}>
+                  {row.count} voto{row.count === 1 ? '' : 's'}
                 </span>
               </div>
             ))}
           </div>
+          <span className={'correct-badge ' + (room.wasCorrect ? 'yes' : 'no')}>
+            {room.wasCorrect ? '✅ ¡Lo descubrieron!' : '❌ Se les escapó...'}
+          </span>
           {actionError && <p className="small error-text">{actionError}</p>}
-          <button className="btn-primary" onClick={() => callAction('reveal-final')}>
-            Ahora sí... ¡el gran reveal! 🎉
-          </button>
+          {room.status === 'round1_result' ? (
+            <button className="btn-primary" onClick={() => callAction('round-next')}>
+              Arrancar Ronda 2: Impostor 🎭
+            </button>
+          ) : (
+            <button className="btn-primary" onClick={() => callAction('reveal-final')}>
+              Ahora sí... ¡el gran reveal! 🎉
+            </button>
+          )}
         </>
       )}
 

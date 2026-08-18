@@ -119,8 +119,8 @@ button:disabled{opacity:.5;cursor:not-allowed;}
   margin:14px 0;
   border:1px dashed rgba(107,142,35,0.45);
 }
-.role-oracle{color:var(--olive-dark);font-weight:bold;font-size:1.05rem;}
-.role-guesser{color:var(--rust);font-weight:bold;font-size:1.05rem;}
+.role-word{color:var(--olive-dark);font-weight:bold;font-size:1.15rem;overflow-wrap:break-word;}
+.role-impostor{color:var(--rust);font-weight:bold;font-size:1.05rem;}
 input[type="number"], input[type="text"]{
   font-family:'Trebuchet MS',sans-serif;
   padding:10px 12px;
@@ -154,15 +154,43 @@ label{
   font-size:.9rem;
 }
 .result-row span:first-child{overflow-wrap:break-word;min-width:0;}
-.tag-oracle{color:var(--olive-dark);font-weight:bold;white-space:nowrap;}
-.tag-guesser{color:var(--rust);font-weight:bold;white-space:nowrap;}
-.oracle-name{
+.result-row.accused{border:1.5px solid var(--rust);}
+.tag-impostor{color:var(--rust);font-weight:bold;white-space:nowrap;}
+.tag-crew{color:#9a917c;font-weight:bold;white-space:nowrap;}
+.impostor-name{
   font-size:clamp(1.15rem, 6vw, 1.4rem);
-  color:var(--olive-dark);
+  color:var(--rust);
   font-weight:bold;
   margin:6px 0 16px;
   overflow-wrap:break-word;
 }
+.correct-badge{font-weight:bold;font-family:'Trebuchet MS',sans-serif;font-size:.95rem;display:block;margin:8px 0;}
+.correct-badge.yes{color:var(--olive-dark);}
+.correct-badge.no{color:var(--rust);}
+.vote-list{display:flex;flex-direction:column;gap:8px;margin:14px 0;}
+.vote-btn{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  width:100%;
+  background:#fff;
+  border:1.5px solid rgba(107,142,35,0.3);
+  border-radius:12px;
+  padding:11px 14px;
+  margin:0;
+  font-family:'Trebuchet MS',sans-serif;
+  font-size:.92rem;
+  font-weight:normal;
+  color:var(--ink);
+  text-align:left;
+}
+.vote-btn.selected{
+  border-color:var(--rust);
+  background:#fdf1ea;
+  color:var(--rust);
+  font-weight:bold;
+}
+.vote-check{color:var(--rust);}
 .final-date{
   font-size:clamp(1.4rem, 8vw, 1.9rem);
   color:var(--olive-dark);

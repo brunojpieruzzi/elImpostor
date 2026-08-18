@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server';
-import { getRoom } from '@/lib/room';
+import { getRoom, tallyVotes } from '@/lib/room';
 import { SECRET_DATE_TEXT, REVEAL_NAMES } from '@/lib/secret';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
 
 // Vista agregada para la pantalla del anfitrión. Requiere el hostToken de esa
-// sala: nadie más puede ver la lista completa ni disparar acciones.
+// sala. Igual que en el juego original, el anfitrión tampoco sabe quién es
+// el impostor hasta el momento del reveal de la ronda.
 export async function GET(request, { params }) {
   const { code } = await params;
   const room = await getRoom(code);
@@ -19,20 +20,28 @@ export async function GET(request, { params }) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 });
   }
 
-  const revealRoles = room.status === 'roles_revealed' || room.status === 'final_revealed';
   const players = [...room.players]
     .sort((a, b) => a.joinedAt - b.joinedAt)
-    .map((p) => ({
-      id: p.id,
-      name: p.name,
-      role: revealRoles ? p.role : null,
-    }));
+    .map((p) => ({ id: p.id, name: p.name }));
 
-  const payload = {
-    status: room.status,
-    players,
-    playerCount: players.length,
-  };
+  const payload = { status: room.status, players, playerCount: players.length };
+
+  if (room.status === 'round1_active' || room.status === 'round2_active') {
+    payload.round = room.currentRound.roundNumber;
+    payload.votesIn = Object.keys(room.currentRound.votes || {}).length;
+  }
+
+  if (room.status === 'round1_result' || room.status === 'round2_result') {
+    const cr = room.currentRound;
+    const impostor = room.players.find((p) => p.id === cr.impostorId);
+    const { rows, accused } = tallyVotes(room);
+    payload.round = cr.roundNumber;
+    payload.word = cr.word;
+    payload.impostorName = impostor ? impostor.name : '-';
+    payload.votesTally = rows;
+    payload.accusedNames = accused.map((a) => a.name);
+    payload.wasCorrect = accused.some((a) => a.id === cr.impostorId);
+  }
 
   if (room.status === 'final_revealed') {
     payload.secret = { dateText: SECRET_DATE_TEXT, names: REVEAL_NAMES };

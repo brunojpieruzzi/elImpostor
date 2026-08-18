@@ -1,7 +1,7 @@
 import './globals.css';
 
 export const metadata = {
-  title: 'El Oráculo 🔮',
+  title: '🎭 Impostor: Edición Casamiento',
   description: 'Un juego para descubrir el gran secreto',
 };
 
@@ -16,7 +16,7 @@ export default function RootLayout({ children }) {
       <body>
         <div id="confetti-layer" />
         <div className="app">{children}</div>
-        <footer className="site-footer">🔮 El Oráculo</footer>
+        <footer className="site-footer">🎭 Impostor: Edición Casamiento</footer>
       </body>
     </html>
   );

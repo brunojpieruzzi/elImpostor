@@ -15,7 +15,7 @@ export async function POST(request, { params }) {
   if (!hostToken || hostToken !== room.hostToken) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 });
   }
-  if (room.status !== 'roles_revealed') {
+  if (room.status !== 'round2_result') {
     return NextResponse.json({ error: 'invalid_state' }, { status: 409 });
   }
 
