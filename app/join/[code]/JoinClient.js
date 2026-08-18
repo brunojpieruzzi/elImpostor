@@ -172,6 +172,9 @@ export default function JoinClient({ code }) {
             <div className="card">
               <div className="role-word">{state.word}</div>
             </div>
+            {state.isStarter && (
+              <p className="starter-badge">🎬 ¡Arrancás vos! Decí la primera pista.</p>
+            )}
             <p className="small">
               Digan palabras o frases relacionadas sin decir la palabra
               posta. Si alguien tira algo raro... ¡ese puede ser el Impostor!

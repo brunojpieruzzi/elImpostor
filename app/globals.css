@@ -121,6 +121,16 @@ button:disabled{opacity:.5;cursor:not-allowed;}
 }
 .role-word{color:var(--olive-dark);font-weight:bold;font-size:1.15rem;overflow-wrap:break-word;}
 .role-impostor{color:var(--rust);font-weight:bold;font-size:1.05rem;}
+.starter-badge{
+  font-family:'Trebuchet MS',sans-serif;
+  font-weight:bold;
+  font-size:.9rem;
+  color:#fff;
+  background:linear-gradient(135deg,var(--olive),var(--olive-dark));
+  border-radius:12px;
+  padding:9px 12px;
+  margin:0 0 12px;
+}
 input[type="number"], input[type="text"]{
   font-family:'Trebuchet MS',sans-serif;
   padding:10px 12px;

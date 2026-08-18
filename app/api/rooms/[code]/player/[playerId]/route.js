@@ -32,6 +32,7 @@ export async function GET(request, { params }) {
     response.round = cr.roundNumber;
     response.isImpostor = isImpostor;
     response.word = isImpostor ? null : cr.word;
+    response.isStarter = cr.starterId === playerId;
   }
 
   if (room.status.endsWith('_voting')) {
