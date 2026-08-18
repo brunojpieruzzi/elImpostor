@@ -3,6 +3,7 @@ import { getRoom } from '@/lib/room';
 import { SECRET_DATE_TEXT, REVEAL_NAMES } from '@/lib/secret';
 
 export const dynamic = 'force-dynamic';
+export const maxDuration = 30;
 
 // Cada invitado sondea su propio estado acá. El dato secreto solo se incluye
 // para el Oráculo (desde que se asignan los roles) o para todos una vez que

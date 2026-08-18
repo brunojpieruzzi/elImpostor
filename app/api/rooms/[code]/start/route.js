@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getRoom, setRoomFields, setPlayers } from '@/lib/room';
 
 export const dynamic = 'force-dynamic';
+export const maxDuration = 30;
 
 export async function POST(request, { params }) {
   const { code } = await params;

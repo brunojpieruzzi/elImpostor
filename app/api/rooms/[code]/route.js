@@ -3,6 +3,7 @@ import { getRoom } from '@/lib/room';
 import { SECRET_DATE_TEXT, REVEAL_NAMES } from '@/lib/secret';
 
 export const dynamic = 'force-dynamic';
+export const maxDuration = 30;
 
 // Vista agregada para la pantalla del anfitrión. Requiere el hostToken de esa
 // sala: nadie más puede ver la lista completa ni disparar acciones.
