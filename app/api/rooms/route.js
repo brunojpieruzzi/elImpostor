@@ -10,6 +10,7 @@ export async function POST() {
     await createRoom(code, hostToken);
     return NextResponse.json({ code, hostToken });
   } catch (err) {
+    console.error('POST /api/rooms failed:', err);
     return NextResponse.json({ error: 'server_error' }, { status: 500 });
   }
 }
