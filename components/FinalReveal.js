@@ -6,7 +6,9 @@ const FRAMES = ['🥁 ...', '🥁 🥁 ...', '🥁 🥁 🥁 ...', '✨ ¡Ahí v
 export default function FinalReveal({ secret, onReplay, showReplay = true }) {
   const [frame, setFrame] = useState(0);
   const [revealed, setRevealed] = useState(false);
+  const [needsTapForSound, setNeedsTapForSound] = useState(false);
   const started = useRef(false);
+  const audioRef = useRef(null);
 
   useEffect(() => {
     if (started.current) return;
@@ -20,16 +22,31 @@ export default function FinalReveal({ secret, onReplay, showReplay = true }) {
         clearInterval(iv);
         setRevealed(true);
         launchConfetti();
+        const audio = audioRef.current;
+        if (audio) {
+          audio.currentTime = 0;
+          audio.play().catch(() => setNeedsTapForSound(true));
+        }
       }
     }, 650);
     return () => clearInterval(iv);
   }, []);
 
+  function playSongNow() {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.play().then(() => setNeedsTapForSound(false)).catch(() => {});
+  }
+
   return (
     <div className={'final-wrap' + (revealed ? ' revealed' : '')}>
+      <audio ref={audioRef} src="/reveal-song.mp3" preload="auto" onError={() => setNeedsTapForSound(false)} />
       <div className="eyebrow">{revealed ? '¡Sorpresa! 💍' : 'El gran momento'}</div>
       <h2>{revealed ? '¡Nos casamos!' : 'Redoble de tambores...'}</h2>
       {!revealed && <div className="drumroll">{FRAMES[frame]}</div>}
+      {revealed && needsTapForSound && (
+        <button className="btn-ghost" onClick={playSongNow}>🔊 Tocá para escuchar la canción</button>
+      )}
       {revealed && secret && (
         <div>
           <div className="final-date">{secret.dateText}</div>
@@ -49,7 +66,7 @@ export default function FinalReveal({ secret, onReplay, showReplay = true }) {
 function launchConfetti() {
   const layer = document.getElementById('confetti-layer');
   if (!layer) return;
-  const colors = ['#c9a227', '#7a2e3a', '#e8cf7c', '#f4b6bd', '#ffffff'];
+  const colors = ['#6b8e23', '#c15123', '#dcd6ca', '#45611a', '#ffffff'];
   const emojis = ['💍', '💛', '🎉', '✨'];
   const total = 90;
   for (let i = 0; i < total; i++) {
