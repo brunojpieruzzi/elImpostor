@@ -1,14 +1,13 @@
 import { NextResponse } from 'next/server';
 import { getRoom, tallyVotes } from '@/lib/room';
-import { SECRET_DATE_TEXT, REVEAL_NAMES } from '@/lib/secret';
+import { SECRET_DATE_TEXT, REVEAL_NAMES, TOTAL_ROUNDS } from '@/lib/secret';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
 
 // Cada invitado sondea su propio estado acá. Durante una ronda activa, solo
 // el propio jugador sabe si es el impostor (y por lo tanto si ve la palabra
-// o no). El dato del casamiento solo se manda una vez que status es
-// 'final_revealed'.
+// o no). El dato final solo se manda una vez que status es 'final_revealed'.
 export async function GET(request, { params }) {
   const { code, playerId } = await params;
   const room = await getRoom(code);
@@ -24,9 +23,10 @@ export async function GET(request, { params }) {
     status: room.status,
     name: player.name,
     playerCount: room.players.length,
+    totalRounds: TOTAL_ROUNDS,
   };
 
-  if (room.status === 'round1_active' || room.status === 'round2_active') {
+  if (room.status.endsWith('_active')) {
     const cr = room.currentRound;
     const isImpostor = cr.impostorId === playerId;
     response.round = cr.roundNumber;
@@ -34,7 +34,7 @@ export async function GET(request, { params }) {
     response.word = isImpostor ? null : cr.word;
   }
 
-  if (room.status === 'round1_voting' || room.status === 'round2_voting') {
+  if (room.status.endsWith('_voting')) {
     const cr = room.currentRound;
     response.round = cr.roundNumber;
     response.players = room.players
@@ -43,7 +43,7 @@ export async function GET(request, { params }) {
     response.myVote = cr.votes[playerId] || null;
   }
 
-  if (room.status === 'round1_result' || room.status === 'round2_result') {
+  if (room.status.endsWith('_result')) {
     const cr = room.currentRound;
     const impostor = room.players.find((p) => p.id === cr.impostorId);
     const { rows, accused, totalVotes } = tallyVotes(room);

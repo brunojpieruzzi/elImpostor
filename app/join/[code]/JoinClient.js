@@ -151,7 +151,7 @@ export default function JoinClient({ code }) {
         </>
       )}
 
-      {(state.status === 'round1_active' || state.status === 'round2_active') &&
+      {state.status.endsWith('_active') &&
         (state.isImpostor ? (
           <>
             <div className="step">Ronda {state.round} · Solo para vos</div>
@@ -180,7 +180,7 @@ export default function JoinClient({ code }) {
           </>
         ))}
 
-      {(state.status === 'round1_voting' || state.status === 'round2_voting') && (
+      {state.status.endsWith('_voting') && (
         <>
           <div className="step">Ronda {state.round} · Votación</div>
           <h2>🗳️ ¿Quién es el Impostor?</h2>
@@ -201,7 +201,7 @@ export default function JoinClient({ code }) {
         </>
       )}
 
-      {(state.status === 'round1_result' || state.status === 'round2_result') && (
+      {state.status.endsWith('_result') && (
         <>
           <div className="step">Ronda {state.round} · Resultado</div>
           <h2>La palabra era: {state.word}</h2>
@@ -222,7 +222,9 @@ export default function JoinClient({ code }) {
           <span className={'correct-badge ' + (state.wasCorrect ? 'yes' : 'no')}>
             {state.wasCorrect ? '✅ ¡Lo descubrieron!' : '❌ Se les escapó...'}
           </span>
-          <p className="small">Esperá la próxima ronda...</p>
+          <p className="small">
+            {state.round < state.totalRounds ? 'Esperá la próxima ronda...' : 'Esperá el gran momento...'}
+          </p>
         </>
       )}
 

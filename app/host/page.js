@@ -204,7 +204,7 @@ export default function HostPage() {
         </>
       )}
 
-      {(room.status === 'round1_active' || room.status === 'round2_active') && (
+      {room.status.endsWith('_active') && (
         <>
           <div className="step">Ronda {room.round} en curso</div>
           <h2>🎭 Discutan la palabra</h2>
@@ -224,7 +224,7 @@ export default function HostPage() {
         </>
       )}
 
-      {(room.status === 'round1_voting' || room.status === 'round2_voting') && (
+      {room.status.endsWith('_voting') && (
         <>
           <div className="step">Ronda {room.round} · Votación abierta</div>
           <h2>🗳️ Están votando</h2>
@@ -243,7 +243,7 @@ export default function HostPage() {
         </>
       )}
 
-      {(room.status === 'round1_result' || room.status === 'round2_result') && (
+      {room.status.endsWith('_result') && (
         <>
           <div className="step">Ronda {room.round} · Resultado</div>
           <h2>La palabra era: {room.word}</h2>
@@ -265,9 +265,9 @@ export default function HostPage() {
             {room.wasCorrect ? '✅ ¡Lo descubrieron!' : '❌ Se les escapó...'}
           </span>
           {actionError && <p className="small error-text">{actionError}</p>}
-          {room.status === 'round1_result' ? (
+          {room.round < room.totalRounds ? (
             <button className="btn-primary" onClick={() => callAction('round-next')}>
-              Arrancar Ronda 2: Impostor 🎭
+              Arrancar Ronda {room.round + 1}: Impostor 🎭
             </button>
           ) : (
             <button className="btn-primary" onClick={() => callAction('reveal-final')}>

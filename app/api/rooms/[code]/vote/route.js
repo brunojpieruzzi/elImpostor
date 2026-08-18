@@ -10,7 +10,7 @@ export async function POST(request, { params }) {
   if (!room) {
     return NextResponse.json({ error: 'room_not_found' }, { status: 404 });
   }
-  if (room.status !== 'round1_voting' && room.status !== 'round2_voting') {
+  if (!room.status.endsWith('_voting')) {
     return NextResponse.json({ error: 'voting_closed' }, { status: 409 });
   }
 

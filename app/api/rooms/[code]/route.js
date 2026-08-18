@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getRoom, tallyVotes } from '@/lib/room';
-import { SECRET_DATE_TEXT, REVEAL_NAMES } from '@/lib/secret';
+import { SECRET_DATE_TEXT, REVEAL_NAMES, TOTAL_ROUNDS } from '@/lib/secret';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
@@ -24,18 +24,23 @@ export async function GET(request, { params }) {
     .sort((a, b) => a.joinedAt - b.joinedAt)
     .map((p) => ({ id: p.id, name: p.name }));
 
-  const payload = { status: room.status, players, playerCount: players.length };
+  const payload = {
+    status: room.status,
+    players,
+    playerCount: players.length,
+    totalRounds: TOTAL_ROUNDS,
+  };
 
-  if (room.status === 'round1_active' || room.status === 'round2_active') {
+  if (room.status.endsWith('_active')) {
     payload.round = room.currentRound.roundNumber;
   }
 
-  if (room.status === 'round1_voting' || room.status === 'round2_voting') {
+  if (room.status.endsWith('_voting')) {
     payload.round = room.currentRound.roundNumber;
     payload.votesIn = Object.keys(room.currentRound.votes || {}).length;
   }
 
-  if (room.status === 'round1_result' || room.status === 'round2_result') {
+  if (room.status.endsWith('_result')) {
     const cr = room.currentRound;
     const impostor = room.players.find((p) => p.id === cr.impostorId);
     const { rows, accused } = tallyVotes(room);

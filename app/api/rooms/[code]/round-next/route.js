@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getRoom, startRound } from '@/lib/room';
-import { ROUND_WORDS } from '@/lib/secret';
+import { TOTAL_ROUNDS } from '@/lib/secret';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
@@ -16,10 +16,15 @@ export async function POST(request, { params }) {
   if (!hostToken || hostToken !== room.hostToken) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 });
   }
-  if (room.status !== 'round1_result') {
+
+  const currentRoundNumber = room.currentRound?.roundNumber;
+  if (!currentRoundNumber || room.status !== `round${currentRoundNumber}_result`) {
     return NextResponse.json({ error: 'invalid_state' }, { status: 409 });
   }
+  if (currentRoundNumber >= TOTAL_ROUNDS) {
+    return NextResponse.json({ error: 'no_more_rounds' }, { status: 409 });
+  }
 
-  await startRound(code, 2, ROUND_WORDS[1]);
+  await startRound(code, currentRoundNumber + 1);
   return NextResponse.json({ ok: true });
 }
