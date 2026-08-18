@@ -179,18 +179,21 @@ export default function JoinClient({ code }) {
         ))}
 
       {(state.status === 'round1_active' || state.status === 'round2_active') && (
-        <div className="vote-list">
-          {state.players.map((p) => (
-            <button
-              key={p.id}
-              className={'vote-btn' + (state.myVote === p.id ? ' selected' : '')}
-              onClick={() => castVote(p.id)}
-              disabled={voting}
-            >
-              <span>{p.name}</span>
-              {state.myVote === p.id && <span className="vote-check">✓ tu voto</span>}
-            </button>
-          ))}
+        <div className="vote-section">
+          <div className="step">🗳️ Votá a quién sospechás</div>
+          <div className="vote-list">
+            {state.players.map((p) => (
+              <button
+                key={p.id}
+                className={'vote-btn' + (state.myVote === p.id ? ' selected' : '')}
+                onClick={() => castVote(p.id)}
+                disabled={voting}
+              >
+                <span>{p.name}</span>
+                {state.myVote === p.id && <span className="vote-check">✓ tu voto</span>}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 

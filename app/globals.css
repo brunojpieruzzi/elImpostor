@@ -167,7 +167,15 @@ label{
 .correct-badge{font-weight:bold;font-family:'Trebuchet MS',sans-serif;font-size:.95rem;display:block;margin:8px 0;}
 .correct-badge.yes{color:var(--olive-dark);}
 .correct-badge.no{color:var(--rust);}
-.vote-list{display:flex;flex-direction:column;gap:8px;margin:14px 0;}
+.vote-section{
+  margin-top:22px;
+  padding:16px 14px 4px;
+  background:var(--sand);
+  border-radius:16px;
+  border:1px solid rgba(193,81,35,0.25);
+}
+.vote-section .step{color:var(--rust);margin-bottom:10px;}
+.vote-list{display:flex;flex-direction:column;gap:8px;margin:0 0 14px;}
 .vote-btn{
   display:flex;
   justify-content:space-between;
