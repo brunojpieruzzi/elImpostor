@@ -40,7 +40,7 @@ export default function FinalReveal({ secret, onReplay, showReplay = true }) {
 
   return (
     <div className={'final-wrap' + (revealed ? ' revealed' : '')}>
-      <audio ref={audioRef} src="/reveal-song.mp3" preload="auto" onError={() => setNeedsTapForSound(false)} />
+      <audio ref={audioRef} src="/reveal-song.mp4" preload="auto" onError={() => setNeedsTapForSound(false)} />
       <div className="eyebrow">{revealed ? '¡Sorpresa! 💍' : 'El gran momento'}</div>
       <h2>{revealed ? '¡Nos casamos!' : 'Redoble de tambores...'}</h2>
       {!revealed && <div className="drumroll">{FRAMES[frame]}</div>}
