@@ -17,7 +17,7 @@ export async function POST(request, { params }) {
   if (room.status !== 'lobby') {
     return NextResponse.json({ error: 'already_started' }, { status: 409 });
   }
-  if (room.players.length < 3) {
+  if (room.players.length < 2) {
     return NextResponse.json({ error: 'not_enough_players' }, { status: 400 });
   }
 

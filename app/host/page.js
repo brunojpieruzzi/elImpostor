@@ -9,7 +9,7 @@ const STORAGE_KEY = 'oraculo_host';
 function mapError(code) {
   switch (code) {
     case 'not_enough_players':
-      return 'Necesitás al menos 3 invitados anotados.';
+      return 'Necesitás al menos 2 invitados anotados.';
     case 'already_started':
       return 'La ronda ya empezó.';
     case 'invalid_state':
@@ -190,14 +190,14 @@ export default function HostPage() {
             ))}
           </div>
           <p className="small">
-            {room.playerCount} anotado{room.playerCount === 1 ? '' : 's'} (mínimo 3)
+            {room.playerCount} anotado{room.playerCount === 1 ? '' : 's'} (mínimo 2)
           </p>
 
           {actionError && <p className="small error-text">{actionError}</p>}
           <button
             className="btn-primary"
             onClick={() => callAction('start')}
-            disabled={room.playerCount < 3}
+            disabled={room.playerCount < 2}
           >
             Elegir al Oráculo en secreto 🤫
           </button>
