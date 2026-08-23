@@ -13,7 +13,10 @@ export default function JoinClient({ code }) {
   const [state, setState] = useState(null);
   const [checkedStorage, setCheckedStorage] = useState(false);
   const [voting, setVoting] = useState(false);
+  const [needsTapForCaughtSound, setNeedsTapForCaughtSound] = useState(false);
   const pollRef = useRef(null);
+  const caughtAudioRef = useRef(null);
+  const caughtSoundRoundRef = useRef(null);
 
   useEffect(() => {
     const saved = localStorage.getItem(storageKey);
@@ -47,6 +50,26 @@ export default function JoinClient({ code }) {
     pollRef.current = setInterval(fetchState, POLL_MS);
     return () => clearInterval(pollRef.current);
   }, [playerId, fetchState]);
+
+  // Sonido "te agarraron" — solo suena en el celular del propio impostor,
+  // y solo si lo descubrieron esa ronda.
+  useEffect(() => {
+    if (!state || !state.status?.endsWith('_result')) return;
+    if (playerId !== state.impostorId || !state.wasCorrect) return;
+    if (caughtSoundRoundRef.current === state.round) return;
+    caughtSoundRoundRef.current = state.round;
+    const audio = caughtAudioRef.current;
+    if (audio) {
+      audio.currentTime = 0;
+      audio.play().catch(() => setNeedsTapForCaughtSound(true));
+    }
+  }, [state, playerId]);
+
+  function playCaughtSoundNow() {
+    const audio = caughtAudioRef.current;
+    if (!audio) return;
+    audio.play().then(() => setNeedsTapForCaughtSound(false)).catch(() => {});
+  }
 
   async function submitJoin(e) {
     e.preventDefault();
@@ -228,6 +251,7 @@ export default function JoinClient({ code }) {
 
       {state.status.endsWith('_result') && (
         <>
+          <audio ref={caughtAudioRef} src="/caught-sound.mp4" preload="auto" />
           <div className="step">Ronda {state.round} · Resultado</div>
           <h2>La palabra era: {state.word}</h2>
           <div className="impostor-name">🎭 {state.impostorName}</div>
@@ -247,6 +271,9 @@ export default function JoinClient({ code }) {
           <span className={'correct-badge ' + (state.wasCorrect ? 'yes' : 'no')}>
             {state.wasCorrect ? '✅ ¡Lo descubrieron!' : '❌ Se les escapó...'}
           </span>
+          {playerId === state.impostorId && state.wasCorrect && needsTapForCaughtSound && (
+            <button className="btn-ghost" onClick={playCaughtSoundNow}>🔊 Tocá acá</button>
+          )}
 
           <div className="score-board">
             <div className="step">🏆 Puntaje</div>
