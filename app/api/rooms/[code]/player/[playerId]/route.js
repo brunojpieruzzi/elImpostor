@@ -50,6 +50,7 @@ export async function GET(request, { params }) {
     const { rows, accused, totalVotes } = tallyVotes(room);
     response.round = cr.roundNumber;
     response.word = cr.word;
+    response.impostorId = cr.impostorId;
     response.impostorName = impostor ? impostor.name : '-';
     response.votesTally = rows;
     response.accusedNames = accused.map((a) => a.name);
