@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getRoom, tallyVotes } from '@/lib/room';
+import { getRoom, tallyVotes, getScoreboard } from '@/lib/room';
 import { SECRET_DATE_TEXT, REVEAL_NAMES, TOTAL_ROUNDS } from '@/lib/secret';
 
 export const dynamic = 'force-dynamic';
@@ -50,10 +50,12 @@ export async function GET(request, { params }) {
     payload.votesTally = rows;
     payload.accusedNames = accused.map((a) => a.name);
     payload.wasCorrect = accused.some((a) => a.id === cr.impostorId);
+    payload.scoreboard = getScoreboard(room);
   }
 
   if (room.status === 'final_revealed') {
     payload.secret = { dateText: SECRET_DATE_TEXT, names: REVEAL_NAMES };
+    payload.scoreboard = getScoreboard(room);
   }
 
   return NextResponse.json(payload);

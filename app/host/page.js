@@ -264,6 +264,19 @@ export default function HostPage() {
           <span className={'correct-badge ' + (room.wasCorrect ? 'yes' : 'no')}>
             {room.wasCorrect ? '✅ ¡Lo descubrieron!' : '❌ Se les escapó...'}
           </span>
+
+          <div className="score-board">
+            <div className="step">🏆 Puntaje</div>
+            {room.scoreboard.map((p) => (
+              <div className="result-row" key={p.id}>
+                <span>{p.name}</span>
+                <span className={p.score > 0 ? 'score-positive' : p.score < 0 ? 'score-negative' : 'score-zero'}>
+                  {p.score > 0 ? `+${p.score}` : p.score} pt{Math.abs(p.score) === 1 ? '' : 's'}
+                </span>
+              </div>
+            ))}
+          </div>
+
           {actionError && <p className="small error-text">{actionError}</p>}
           {room.round < room.totalRounds ? (
             <button className="btn-primary" onClick={() => callAction('round-next')}>
@@ -278,7 +291,7 @@ export default function HostPage() {
       )}
 
       {room.status === 'final_revealed' && (
-        <FinalReveal secret={room.secret} onReplay={newRoom} />
+        <FinalReveal secret={room.secret} scoreboard={room.scoreboard} onReplay={newRoom} />
       )}
     </div>
   );

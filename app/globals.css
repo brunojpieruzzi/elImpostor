@@ -177,6 +177,11 @@ label{
 .correct-badge{font-weight:bold;font-family:'Trebuchet MS',sans-serif;font-size:.95rem;display:block;margin:8px 0;}
 .correct-badge.yes{color:var(--olive-dark);}
 .correct-badge.no{color:var(--rust);}
+.score-board{margin-top:16px;text-align:left;}
+.score-board .step{text-align:center;}
+.score-positive{color:var(--olive-dark);font-weight:bold;white-space:nowrap;}
+.score-negative{color:var(--rust);font-weight:bold;white-space:nowrap;}
+.score-zero{color:#9a917c;font-weight:bold;white-space:nowrap;}
 .vote-section{
   margin-top:22px;
   padding:16px 14px 4px;

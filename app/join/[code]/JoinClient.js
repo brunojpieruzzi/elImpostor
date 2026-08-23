@@ -225,6 +225,19 @@ export default function JoinClient({ code }) {
           <span className={'correct-badge ' + (state.wasCorrect ? 'yes' : 'no')}>
             {state.wasCorrect ? '✅ ¡Lo descubrieron!' : '❌ Se les escapó...'}
           </span>
+
+          <div className="score-board">
+            <div className="step">🏆 Puntaje</div>
+            {state.scoreboard.map((p) => (
+              <div className="result-row" key={p.id}>
+                <span>{p.name}</span>
+                <span className={p.score > 0 ? 'score-positive' : p.score < 0 ? 'score-negative' : 'score-zero'}>
+                  {p.score > 0 ? `+${p.score}` : p.score} pt{Math.abs(p.score) === 1 ? '' : 's'}
+                </span>
+              </div>
+            ))}
+          </div>
+
           <p className="small">
             {state.round < state.totalRounds ? 'Esperá la próxima ronda...' : 'Esperá el gran momento...'}
           </p>
@@ -232,7 +245,7 @@ export default function JoinClient({ code }) {
       )}
 
       {state.status === 'final_revealed' && (
-        <FinalReveal secret={state.secret} showReplay={false} />
+        <FinalReveal secret={state.secret} scoreboard={state.scoreboard} showReplay={false} />
       )}
     </div>
   );

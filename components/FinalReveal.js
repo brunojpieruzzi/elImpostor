@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 
 const FRAMES = ['🥁 ...', '🥁 🥁 ...', '🥁 🥁 🥁 ...', '✨ ¡Ahí viene!'];
 
-export default function FinalReveal({ secret, onReplay, showReplay = true }) {
+export default function FinalReveal({ secret, scoreboard, onReplay, showReplay = true }) {
   const [frame, setFrame] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [needsTapForSound, setNeedsTapForSound] = useState(false);
@@ -52,6 +52,19 @@ export default function FinalReveal({ secret, onReplay, showReplay = true }) {
           <div className="final-date">{secret.dateText}</div>
           <div className="final-names">{secret.names}</div>
           <p className="small">¡Gracias por jugar! 🎊</p>
+        </div>
+      )}
+      {revealed && scoreboard && scoreboard.length > 0 && (
+        <div className="score-board">
+          <div className="step">🏆 Puntaje final</div>
+          {scoreboard.map((p, i) => (
+            <div className="result-row" key={p.id}>
+              <span>{i === 0 ? '🥇 ' : ''}{p.name}</span>
+              <span className={p.score > 0 ? 'score-positive' : p.score < 0 ? 'score-negative' : 'score-zero'}>
+                {p.score > 0 ? `+${p.score}` : p.score} pt{Math.abs(p.score) === 1 ? '' : 's'}
+              </span>
+            </div>
+          ))}
         </div>
       )}
       {revealed && showReplay && (
