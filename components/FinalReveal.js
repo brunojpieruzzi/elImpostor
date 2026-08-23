@@ -41,8 +41,8 @@ export default function FinalReveal({ secret, onReplay, showReplay = true }) {
   return (
     <div className={'final-wrap' + (revealed ? ' revealed' : '')}>
       <audio ref={audioRef} src="/reveal-song.mp4" preload="auto" onError={() => setNeedsTapForSound(false)} />
-      <div className="eyebrow">{revealed ? '¡Sorpresa! 💍' : 'El gran momento'}</div>
-      <h2>{revealed ? '¡Nos casamos!' : 'Redoble de tambores...'}</h2>
+      <div className="eyebrow">{revealed ? '¡Sorpresa! 🎉' : 'El gran momento'}</div>
+      <h2>{revealed ? '¡Felicitaciones!' : 'Redoble de tambores...'}</h2>
       {!revealed && <div className="drumroll">{FRAMES[frame]}</div>}
       {revealed && needsTapForSound && (
         <button className="btn-ghost" onClick={playSongNow}>🔊 Tocá para escuchar la canción</button>
@@ -50,8 +50,8 @@ export default function FinalReveal({ secret, onReplay, showReplay = true }) {
       {revealed && secret && (
         <div>
           <div className="final-date">{secret.dateText}</div>
-          <div className="final-names">{secret.names} se casan 🎊</div>
-          <p className="small">¡Los esperamos para celebrar el amor (y brindar de más)! 🥂</p>
+          <div className="final-names">{secret.names}</div>
+          <p className="small">¡Gracias por jugar! 🎊</p>
         </div>
       )}
       {revealed && showReplay && (
@@ -67,7 +67,7 @@ function launchConfetti() {
   const layer = document.getElementById('confetti-layer');
   if (!layer) return;
   const colors = ['#6b8e23', '#c15123', '#dcd6ca', '#45611a', '#ffffff'];
-  const emojis = ['💍', '💛', '🎉', '✨'];
+  const emojis = ['🎉', '⭐', '🎊', '✨'];
   const total = 90;
   for (let i = 0; i < total; i++) {
     const piece = document.createElement('div');
