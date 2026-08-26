@@ -10,8 +10,8 @@ export async function POST(request, { params }) {
   if (!room) {
     return NextResponse.json({ error: 'room_not_found' }, { status: 404 });
   }
-  if (room.status !== 'lobby') {
-    return NextResponse.json({ error: 'round_started' }, { status: 409 });
+  if (room.status === 'final_revealed') {
+    return NextResponse.json({ error: 'game_over' }, { status: 409 });
   }
 
   let body;
@@ -26,7 +26,7 @@ export async function POST(request, { params }) {
   const id = crypto.randomUUID();
   const updated = await addPlayer(code, { id, name, joinedAt: Date.now() });
   if (!updated) {
-    return NextResponse.json({ error: 'round_started' }, { status: 409 });
+    return NextResponse.json({ error: 'game_over' }, { status: 409 });
   }
 
   return NextResponse.json({ playerId: id, name });

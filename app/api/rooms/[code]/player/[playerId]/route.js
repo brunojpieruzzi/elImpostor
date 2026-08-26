@@ -28,20 +28,30 @@ export async function GET(request, { params }) {
 
   if (room.status.endsWith('_active')) {
     const cr = room.currentRound;
-    const isImpostor = cr.impostorId === playerId;
     response.round = cr.roundNumber;
-    response.isImpostor = isImpostor;
-    response.word = isImpostor ? null : cr.word;
-    response.isStarter = cr.starterId === playerId;
+    if (!cr.rosterIds.includes(playerId)) {
+      // Se sumó a mitad de esta ronda: espera a la siguiente, sin ver
+      // la palabra ni el rol de la ronda en curso.
+      response.waitingForNextRound = true;
+    } else {
+      const isImpostor = cr.impostorId === playerId;
+      response.isImpostor = isImpostor;
+      response.word = isImpostor ? null : cr.word;
+      response.isStarter = cr.starterId === playerId;
+    }
   }
 
   if (room.status.endsWith('_voting')) {
     const cr = room.currentRound;
     response.round = cr.roundNumber;
-    response.players = room.players
-      .filter((p) => p.id !== playerId)
-      .map((p) => ({ id: p.id, name: p.name }));
-    response.myVote = cr.votes[playerId] || null;
+    if (!cr.rosterIds.includes(playerId)) {
+      response.waitingForNextRound = true;
+    } else {
+      response.players = room.players
+        .filter((p) => p.id !== playerId)
+        .map((p) => ({ id: p.id, name: p.name }));
+      response.myVote = cr.votes[playerId] || null;
+    }
   }
 
   if (room.status.endsWith('_result')) {
