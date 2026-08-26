@@ -280,6 +280,28 @@ label{
   color:var(--olive-dark);
   margin:6px 0;
 }
+.invite-panel{
+  margin-bottom:16px;
+  padding-bottom:12px;
+  border-bottom:1px dashed rgba(107,142,35,0.3);
+}
+.invite-panel-body{margin-top:10px;}
+.invite-panel-body img{
+  display:block;
+  margin:0 auto 8px;
+  width:140px;
+  height:140px;
+  background:#fff;
+  border-radius:12px;
+  padding:8px;
+}
+.invite-code-mini{
+  font-size:1.5rem;
+  letter-spacing:4px;
+  font-weight:bold;
+  color:var(--olive-dark);
+  margin:4px 0;
+}
 .player-list{
   display:flex;
   flex-wrap:wrap;

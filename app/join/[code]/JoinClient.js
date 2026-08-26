@@ -63,7 +63,7 @@ export default function JoinClient({ code }) {
         return;
       }
       if (res.status === 409) {
-        setJoinError('La ronda ya empezó, esperá a la próxima.');
+        setJoinError('El juego ya terminó en esta sala.');
         return;
       }
       if (!res.ok) {
@@ -151,7 +151,18 @@ export default function JoinClient({ code }) {
         </>
       )}
 
-      {state.status.endsWith('_active') &&
+      {state.status.endsWith('_active') && state.waitingForNextRound && (
+        <>
+          <div className="step">Ronda {state.round} en curso</div>
+          <h2>👀 Te sumaste a mitad de ronda</h2>
+          <p className="small">
+            Esta ronda ya estaba en curso, así que no participás de esta.
+            Esperá a que arranque la próxima.
+          </p>
+        </>
+      )}
+
+      {state.status.endsWith('_active') && !state.waitingForNextRound &&
         (state.isImpostor ? (
           <>
             <div className="step">Ronda {state.round} · Solo para vos</div>
@@ -183,7 +194,18 @@ export default function JoinClient({ code }) {
           </>
         ))}
 
-      {state.status.endsWith('_voting') && (
+      {state.status.endsWith('_voting') && state.waitingForNextRound && (
+        <>
+          <div className="step">Ronda {state.round} en curso</div>
+          <h2>👀 Te sumaste a mitad de ronda</h2>
+          <p className="small">
+            Están votando esta ronda, pero no participaste desde el
+            principio. Esperá a que arranque la próxima.
+          </p>
+        </>
+      )}
+
+      {state.status.endsWith('_voting') && !state.waitingForNextRound && (
         <>
           <div className="step">Ronda {state.round} · Votación</div>
           <h2>🗳️ ¿Quién es el Impostor?</h2>

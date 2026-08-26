@@ -32,6 +32,10 @@ export async function POST(request, { params }) {
   if (!voter || !target) {
     return NextResponse.json({ error: 'invalid_player' }, { status: 400 });
   }
+  const roster = room.currentRound?.rosterIds;
+  if (roster && !roster.includes(playerId)) {
+    return NextResponse.json({ error: 'not_in_this_round' }, { status: 403 });
+  }
 
   const ok = await castVote(code, room.currentRound.roundNumber, playerId, votedForId);
   if (!ok) {

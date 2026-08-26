@@ -31,6 +31,7 @@ export default function HostPage() {
   const [creating, setCreating] = useState(false);
   const [checkedStorage, setCheckedStorage] = useState(false);
   const [actionError, setActionError] = useState('');
+  const [showInvite, setShowInvite] = useState(false);
   const pollRef = useRef(null);
 
   useEffect(() => {
@@ -165,6 +166,24 @@ export default function HostPage() {
 
   return (
     <div className="screen">
+      {room.status !== 'lobby' && (
+        <div className="invite-panel">
+          <button className="btn-ghost" onClick={() => setShowInvite((v) => !v)}>
+            {showInvite ? '▲ Ocultar código para sumarse' : '📱 Alguien se quiere sumar'}
+          </button>
+          {showInvite && (
+            <div className="invite-panel-body">
+              {qrUrl && <img src={qrUrl} alt="Código QR para unirse" width={140} height={140} />}
+              <div className="invite-code-mini">{code}</div>
+              <p className="small">
+                O en <strong>{host}</strong> con ese código.
+              </p>
+              <p className="small">Se suma ya mismo, pero recién juega desde la próxima ronda.</p>
+            </div>
+          )}
+        </div>
+      )}
+
       {room.status === 'lobby' && (
         <>
           <div className="step">Paso 1 · Sala abierta</div>
