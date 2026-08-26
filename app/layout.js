@@ -16,7 +16,6 @@ export default function RootLayout({ children }) {
       <body>
         <div id="confetti-layer" />
         <div className="app">{children}</div>
-        <footer className="site-footer">🎭 Impostor</footer>
       </body>
     </html>
   );
