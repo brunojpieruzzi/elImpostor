@@ -128,6 +128,28 @@ export default function HostPage() {
     }
   }
 
+  async function changeRounds(delta) {
+    if (!room) return;
+    const next = room.totalRounds + delta;
+    if (next < 1 || next > room.maxRounds) return;
+    setActionError('');
+    try {
+      const res = await fetch(`/api/rooms/${code}/set-rounds`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-host-token': hostToken },
+        body: JSON.stringify({ rounds: next }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setActionError(mapError(data.error));
+        return;
+      }
+      fetchRoom();
+    } catch {
+      setActionError('Se perdió la conexión. Probá de nuevo.');
+    }
+  }
+
   function newRoom() {
     localStorage.removeItem(STORAGE_KEY);
     setCode(null);
@@ -211,6 +233,28 @@ export default function HostPage() {
           <p className="small">
             {room.playerCount} anotado{room.playerCount === 1 ? '' : 's'} (mínimo 2)
           </p>
+
+          <div className="rounds-picker">
+            <span className="small">Cantidad de rondas</span>
+            <div className="rounds-picker-controls">
+              <button
+                className="btn-secondary"
+                onClick={() => changeRounds(-1)}
+                disabled={room.totalRounds <= 1}
+              >
+                −
+              </button>
+              <span className="rounds-picker-value">{room.totalRounds}</span>
+              <button
+                className="btn-secondary"
+                onClick={() => changeRounds(1)}
+                disabled={room.totalRounds >= room.maxRounds}
+              >
+                +
+              </button>
+            </div>
+            <span className="small">(máximo {room.maxRounds})</span>
+          </div>
 
           {actionError && <p className="small error-text">{actionError}</p>}
           <button

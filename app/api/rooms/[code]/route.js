@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getRoom, tallyVotes, getScoreboard } from '@/lib/room';
-import { SECRET_DATE_TEXT, REVEAL_NAMES, TOTAL_ROUNDS } from '@/lib/secret';
+import { getRoom, tallyVotes, getScoreboard, MAX_ROUNDS } from '@/lib/room';
+import { SECRET_DATE_TEXT, REVEAL_NAMES } from '@/lib/secret';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
@@ -28,7 +28,8 @@ export async function GET(request, { params }) {
     status: room.status,
     players,
     playerCount: players.length,
-    totalRounds: TOTAL_ROUNDS,
+    totalRounds: room.totalRounds,
+    maxRounds: MAX_ROUNDS,
   };
 
   if (room.status.endsWith('_active')) {
