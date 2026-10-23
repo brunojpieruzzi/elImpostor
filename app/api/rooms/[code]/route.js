@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getRoom, tallyVotes, getScoreboard, MAX_ROUNDS } from '@/lib/room';
-import { SECRET_DATE_TEXT, REVEAL_NAMES } from '@/lib/secret';
+import { categoryList } from '@/lib/secret';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
@@ -32,6 +32,11 @@ export async function GET(request, { params }) {
     maxRounds: MAX_ROUNDS,
   };
 
+  if (room.status === 'lobby') {
+    payload.categories = categoryList();
+    payload.selectedCategories = room.categories;
+  }
+
   if (room.status.endsWith('_active')) {
     payload.round = room.currentRound.roundNumber;
   }
@@ -55,7 +60,6 @@ export async function GET(request, { params }) {
   }
 
   if (room.status === 'final_revealed') {
-    payload.secret = { dateText: SECRET_DATE_TEXT, names: REVEAL_NAMES };
     payload.scoreboard = getScoreboard(room);
   }
 

@@ -130,7 +130,7 @@ export default function JoinClient({ code }) {
         <p>
           En cada ronda, todos menos el Impostor conocen una palabra secreta.
           Tiren pistas sin decirla directamente y descubran quién no la sabe
-          realmente. La última ronda no se juega... ¡hay un premio!
+          realmente. Al final gana quien sume más puntos.
         </p>
         <form onSubmit={submitJoin}>
           <label htmlFor="playerName">Tu nombre</label>
@@ -288,13 +288,13 @@ export default function JoinClient({ code }) {
           </div>
 
           <p className="small">
-            {state.round < state.totalRounds ? 'Esperá la próxima ronda...' : 'Esperá el gran momento...'}
+            {state.round < state.totalRounds ? 'Esperá la próxima ronda...' : 'Esperá el podio final...'}
           </p>
         </>
       )}
 
       {state.status === 'final_revealed' && (
-        <FinalReveal secret={state.secret} scoreboard={state.scoreboard} showReplay={false} />
+        <FinalReveal scoreboard={state.scoreboard} showReplay={false} />
       )}
     </div>
   );

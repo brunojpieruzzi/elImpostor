@@ -2,7 +2,7 @@ import './globals.css';
 
 export const metadata = {
   title: '🎭 Impostor',
-  description: 'Un juego de pistas, votos y un gran premio final',
+  description: 'Un juego de palabras secretas, pistas y votos',
 };
 
 export const viewport = {

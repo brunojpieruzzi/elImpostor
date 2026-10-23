@@ -14,6 +14,8 @@ function mapError(code) {
       return 'La ronda ya empezó.';
     case 'invalid_state':
       return 'Ese paso ya se hizo.';
+    case 'no_categories':
+      return 'Dejá al menos una categoría elegida.';
     case 'forbidden':
       return 'No tenés permiso sobre esta sala.';
     default:
@@ -150,6 +152,50 @@ export default function HostPage() {
     }
   }
 
+  async function toggleCategory(key) {
+    if (!room) return;
+    const current = room.selectedCategories || [];
+    const next = current.includes(key)
+      ? current.filter((k) => k !== key)
+      : [...current, key];
+    if (next.length === 0) {
+      setActionError(mapError('no_categories'));
+      return;
+    }
+    setActionError('');
+    // Se refleja al toque en pantalla y después se confirma con el servidor.
+    setRoom((r) => (r ? { ...r, selectedCategories: next } : r));
+    try {
+      const res = await fetch(`/api/rooms/${code}/set-categories`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-host-token': hostToken },
+        body: JSON.stringify({ categories: next }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setActionError(mapError(data.error));
+      }
+      fetchRoom();
+    } catch {
+      setActionError('Se perdió la conexión. Probá de nuevo.');
+      fetchRoom();
+    }
+  }
+
+  async function setAllCategories() {
+    if (!room?.categories) return;
+    const all = room.categories.map((c) => c.key);
+    setRoom((r) => (r ? { ...r, selectedCategories: all } : r));
+    try {
+      await fetch(`/api/rooms/${code}/set-categories`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-host-token': hostToken },
+        body: JSON.stringify({ categories: all }),
+      });
+    } catch {}
+    fetchRoom();
+  }
+
   function newRoom() {
     localStorage.removeItem(STORAGE_KEY);
     setCode(null);
@@ -233,6 +279,35 @@ export default function HostPage() {
           <p className="small">
             {room.playerCount} anotado{room.playerCount === 1 ? '' : 's'} (mínimo 2)
           </p>
+
+          {room.categories && (
+            <div className="category-picker">
+              <span className="small">Categorías de la partida</span>
+              <div className="category-chips">
+                {room.categories.map((c) => {
+                  const on = (room.selectedCategories || []).includes(c.key);
+                  return (
+                    <button
+                      key={c.key}
+                      className={'category-chip' + (on ? ' on' : '')}
+                      onClick={() => toggleCategory(c.key)}
+                    >
+                      {c.label}
+                    </button>
+                  );
+                })}
+              </div>
+              <button className="btn-ghost" onClick={setAllCategories}>
+                Marcar todas
+              </button>
+              <p className="small">
+                {(room.selectedCategories || []).length} de {room.categories.length} elegidas
+                {room.totalRounds > (room.selectedCategories || []).length
+                  ? ' · algunas se van a repetir'
+                  : ''}
+              </p>
+            </div>
+          )}
 
           <div className="rounds-picker">
             <span className="small">Cantidad de rondas</span>
@@ -347,14 +422,14 @@ export default function HostPage() {
             </button>
           ) : (
             <button className="btn-primary" onClick={() => callAction('reveal-final')}>
-              Ahora sí... ¡el gran reveal! 🎉
+              Ver el podio final 🏆
             </button>
           )}
         </>
       )}
 
       {room.status === 'final_revealed' && (
-        <FinalReveal secret={room.secret} scoreboard={room.scoreboard} onReplay={newRoom} />
+        <FinalReveal scoreboard={room.scoreboard} onReplay={newRoom} />
       )}
     </div>
   );

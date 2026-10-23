@@ -1,13 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getRoom, tallyVotes, getScoreboard } from '@/lib/room';
-import { SECRET_DATE_TEXT, REVEAL_NAMES } from '@/lib/secret';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
 
 // Cada invitado sondea su propio estado acá. Durante una ronda activa, solo
 // el propio jugador sabe si es el impostor (y por lo tanto si ve la palabra
-// o no). El dato final solo se manda una vez que status es 'final_revealed'.
+// o no). El puntaje final solo se manda cuando status es 'final_revealed'.
 export async function GET(request, { params }) {
   const { code, playerId } = await params;
   const room = await getRoom(code);
@@ -70,7 +69,6 @@ export async function GET(request, { params }) {
   }
 
   if (room.status === 'final_revealed') {
-    response.secret = { dateText: SECRET_DATE_TEXT, names: REVEAL_NAMES };
     response.scoreboard = getScoreboard(room);
   }
 

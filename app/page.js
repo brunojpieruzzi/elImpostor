@@ -24,7 +24,7 @@ export default function HomePage() {
       <p>
         En cada ronda todos reciben la misma palabra secreta... menos el
         Impostor. Tiren pistas sin decirla directamente y voten a quién
-        sospechan. La última ronda no se juega — ¡hay un premio!
+        sospechan. Al final gana quien sume más puntos.
       </p>
       <p className="small">
         Cada invitado juega desde su propio celular. El anfitrión arma la sala

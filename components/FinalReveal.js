@@ -3,12 +3,10 @@ import { useEffect, useRef, useState } from 'react';
 
 const FRAMES = ['🥁 ...', '🥁 🥁 ...', '🥁 🥁 🥁 ...', '✨ ¡Ahí viene!'];
 
-export default function FinalReveal({ secret, scoreboard, onReplay, showReplay = true }) {
+export default function FinalReveal({ scoreboard, onReplay, showReplay = true }) {
   const [frame, setFrame] = useState(0);
   const [revealed, setRevealed] = useState(false);
-  const [needsTapForSound, setNeedsTapForSound] = useState(false);
   const started = useRef(false);
-  const audioRef = useRef(null);
 
   useEffect(() => {
     if (started.current) return;
@@ -22,42 +20,36 @@ export default function FinalReveal({ secret, scoreboard, onReplay, showReplay =
         clearInterval(iv);
         setRevealed(true);
         launchConfetti();
-        const audio = audioRef.current;
-        if (audio) {
-          audio.currentTime = 0;
-          audio.play().catch(() => setNeedsTapForSound(true));
-        }
       }
     }, 650);
     return () => clearInterval(iv);
   }, []);
 
-  function playSongNow() {
-    const audio = audioRef.current;
-    if (!audio) return;
-    audio.play().then(() => setNeedsTapForSound(false)).catch(() => {});
-  }
+  const board = scoreboard || [];
+  const topScore = board.length > 0 ? board[0].score : 0;
+  const winners = board.filter((p) => p.score === topScore).map((p) => p.name);
 
   return (
     <div className={'final-wrap' + (revealed ? ' revealed' : '')}>
-      <audio ref={audioRef} src="/reveal-song.mp4" preload="auto" onError={() => setNeedsTapForSound(false)} />
-      <div className="eyebrow">{revealed ? '¡Sorpresa! 💍' : 'El gran momento'}</div>
-      <h2>{revealed ? '¡Nos casamos!' : 'Redoble de tambores...'}</h2>
+      <div className="eyebrow">{revealed ? 'Fin del juego 🎉' : 'El gran momento'}</div>
+      <h2>{revealed ? '¡Y el podio es...!' : 'Redoble de tambores...'}</h2>
       {!revealed && <div className="drumroll">{FRAMES[frame]}</div>}
-      {revealed && needsTapForSound && (
-        <button className="btn-ghost" onClick={playSongNow}>🔊 Tocá para escuchar la canción</button>
-      )}
-      {revealed && secret && (
+
+      {revealed && winners.length > 0 && (
         <div>
-          <div className="final-date">{secret.dateText}</div>
-          <div className="final-names">{secret.names} se casan 🎊</div>
-          <p className="small">¡Los esperamos para celebrar el amor (y brindar de más)! 🥂</p>
+          <div className="final-winner">
+            🏆 {winners.join(' y ')}
+          </div>
+          <p className="small">
+            {winners.length === 1 ? 'Ganó' : 'Ganaron'} con {topScore} punto{Math.abs(topScore) === 1 ? '' : 's'}
+          </p>
         </div>
       )}
-      {revealed && scoreboard && scoreboard.length > 0 && (
+
+      {revealed && board.length > 0 && (
         <div className="score-board">
           <div className="step">🏆 Puntaje final</div>
-          {scoreboard.map((p, i) => (
+          {board.map((p, i) => (
             <div className="result-row" key={p.id}>
               <span>{i === 0 ? '🥇 ' : ''}{p.name}</span>
               <span className={p.score > 0 ? 'score-positive' : p.score < 0 ? 'score-negative' : 'score-zero'}>
@@ -67,9 +59,12 @@ export default function FinalReveal({ secret, scoreboard, onReplay, showReplay =
           ))}
         </div>
       )}
+
+      {revealed && <p className="small">¡Gracias por jugar! 🎊</p>}
+
       {revealed && showReplay && (
         <button className="btn-secondary" onClick={onReplay}>
-          Jugar otra ronda con otros invitados 🔁
+          Jugar otra partida 🔁
         </button>
       )}
     </div>
@@ -80,7 +75,7 @@ function launchConfetti() {
   const layer = document.getElementById('confetti-layer');
   if (!layer) return;
   const colors = ['#6b8e23', '#c15123', '#dcd6ca', '#45611a', '#ffffff'];
-  const emojis = ['💍', '💛', '🎉', '✨'];
+  const emojis = ['🎉', '⭐', '🎊', '✨'];
   const total = 90;
   for (let i = 0; i < total; i++) {
     const piece = document.createElement('div');

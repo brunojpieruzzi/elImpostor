@@ -214,13 +214,36 @@ label{
   font-weight:bold;
 }
 .vote-check{color:var(--rust);}
-.final-date{
+.final-winner{
   font-size:clamp(1.4rem, 8vw, 1.9rem);
   color:var(--olive-dark);
   margin:14px 0 6px;
   font-weight:bold;
+  overflow-wrap:break-word;
 }
-.final-names{font-size:1.1rem;color:var(--rust);font-weight:bold;overflow-wrap:break-word;}
+.category-picker{margin:14px 0;}
+.category-chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  justify-content:center;
+  margin:8px 0;
+}
+.category-chip{
+  margin:0;
+  padding:8px 14px;
+  font-size:.85rem;
+  font-weight:normal;
+  background:#fff;
+  color:#5a5142;
+  border:1.5px solid rgba(107,142,35,0.35);
+}
+.category-chip.on{
+  background:var(--olive);
+  border-color:var(--olive-dark);
+  color:#fff;
+  font-weight:bold;
+}
 .final-wrap.revealed{
   background:linear-gradient(160deg, #fff, var(--sand-light));
   border-radius:16px;
@@ -229,7 +252,7 @@ label{
 }
 .final-wrap.revealed .eyebrow{color:var(--rust);}
 .final-wrap.revealed h2{color:var(--olive-dark);}
-.final-wrap.revealed .final-date{color:var(--olive-dark);}
+.final-wrap.revealed .final-winner{color:var(--olive-dark);}
 .drumroll{font-family:'Trebuchet MS',sans-serif;font-size:1rem;color:var(--rust);min-height:24px;}
 .step{font-family:'Trebuchet MS',sans-serif;font-size:.72rem;color:#a39a86;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
 .site-footer{
